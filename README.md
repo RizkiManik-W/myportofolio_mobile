@@ -1,86 +1,83 @@
-# MyPortfolio Mobile - Tutorial 08
+# Portfolio Mobile Project
 
-Aplikasi Flutter untuk Tutorial 08: Basic Flutter, PBP Gasal 2026/2027.
-Aplikasi Flutter berada di subfolder `myportofolio_mobile` dalam repositori Django `myportofolio`. Jalankan perintah Flutter dari subfolder ini.
+Nama : PUTU RIZKI MANIK WIDIADNYANA
 
-## Menjalankan
+NPM : 2506621900
 
-```powershell
+Kelas : B
+
+## About
+Proyek ini adalah versi mobile dari website portofolio pribadi saya ([myportofolio](https://github.com/RizkiManik-W/myportofolio)) yang dibuat dengan Flutter. Proyek ini saya buat untuk belajar pengembangan aplikasi mobile multiplatform dan, kedepannya, akan terhubung dengan backend Django portofolio saya.
+
+## Tech Stack
+- Dart
+- Flutter (Material 3)
+- flutter_test (widget testing)
+- flutter_lints (static analysis)
+
+## Local Setup
+
+### 1. Install Flutter SDK
+Ikuti panduan resmi di https://docs.flutter.dev/get-started/install, lalu cek instalasi:
+```bash
+flutter doctor
+```
+
+### 2. Clone the repository
+```bash
+git clone https://github.com/RizkiManik-W/myportofolio_mobile.git
+cd myportofolio_mobile
+```
+
+### 3. Install dependencies
+```bash
 flutter pub get
+```
+
+### 4. Run the app
+```bash
 flutter run -d chrome
 ```
 
-Jika Flutter belum terbaca di terminal yang sudah dibuka, gunakan
-`C:\tools\flutter\bin\flutter.bat` sebagai pengganti `flutter`.
+Untuk melihat device yang tersedia (Chrome, emulator Android, dll.):
+```bash
+flutter devices
+```
 
-## Implementasi
+Saat aplikasi berjalan, tekan `r` untuk hot reload, `R` untuk hot restart, dan `q` untuk keluar.
 
-- `lib/main.dart`: bootstrap `MyApp`, tema Material 3 indigo dan amber,
-  serta halaman awal `MyHomePage`.
-- `lib/menu.dart`: halaman stateless, widget reusable `InfoCard` dan `ItemCard`,
-  model `ItemHomepage`, dan grid tiga kolom.
-- Identitas contoh tutorial: Burhan, NPM 2406000001, kelas PBP A.
-- Tombol Lihat Proyek, Tambah Proyek, dan Logout menampilkan SnackBar
-  `Kamu telah menekan tombol <nama tombol>!`.
-- Konten dapat digulir pada layar pendek; kartu identitas menyesuaikan lebar
-  tersedia agar tidak overflow pada ponsel.
-
-Tutorial ini belum menghubungkan aplikasi ke REST API Django dan belum membuat
-halaman proyek atau autentikasi. Tombol-tombol memberikan umpan balik SnackBar
-sesuai lingkup Tutorial 08. Personalisasi identitas dan menu merupakan bagian
-Individual Assignment 7.
-
-## Verifikasi
-
-```powershell
-dart format --output=none --set-exit-if-changed lib test
+### 5. Check code quality and run tests
+```bash
 flutter analyze
 flutter test
-flutter build web
 ```
 
-Pengujian widget mencakup identitas pemilik, ketiga tombol dan pesannya,
-serta layout layar kecil dalam orientasi portrait dan landscape.
-
-## Pengumpulan
-
-Sesuai permintaan pemilik, aplikasi ini sekarang mengikuti Git repositori
-Django di folder induk. Dari root `myportofolio`, jalankan:
-
-```powershell
-git add myportofolio_mobile
-git commit -m "Add Tutorial 08 Flutter mobile app"
-git push
+## Project Structure
+```bash
+myportofolio_mobile/
+├── pubspec.yaml
+├── analysis_options.yaml
+├── lib/
+│   ├── main.dart        # bootstrap aplikasi (MyApp, MaterialApp, tema)
+│   └── menu.dart        # halaman utama (MyHomePage, InfoCard, ItemCard, ItemHomepage)
+├── test/
+│   └── widget_test.dart # widget tests untuk halaman utama
+├── tool/
+│   └── halo_burhan.dart # contoh program Dart dari tutorial
+├── docs/                # screenshot
+├── android/ ios/ web/ windows/ linux/ macos/
+└── README.md
 ```
 
-Panduan tutorial asli meminta repositori Flutter terpisah. Susunan folder
-saat ini mengikuti permintaan pemilik untuk menggunakan repositori yang sama.
-Riwayat Git mobile sebelumnya disimpan di folder saudara
-`myportofolio_mobile.git-backup` di luar repositori Django.
+## Tutorial 08
+Di tutorial ini, saya melakukan setup Flutter SDK, membuat proyek `myportofolio_mobile`, memisahkan halaman utama ke `menu.dart`, mengubah `MyHomePage` menjadi `StatelessWidget`, dan membuat widget `InfoCard` dan `ItemCard` dengan SnackBar untuk setiap tombol.
 
-Referensi: tutorial mata kuliah yang diberikan dan
-[dokumentasi Flutter](https://docs.flutter.dev/).
-
-## Hasil pemeriksaan lokal
-
-Diverifikasi dengan Flutter 3.47.9 dan Dart 3.13.7:
-
-- `flutter analyze`: No issues found.
-- `flutter test`: 6 pengujian berhasil.
-- `flutter build web`: berhasil.
-- Chrome headless: halaman berhasil dirender tanpa JavaScript page error.
-- `dart run tool/halo_burhan.dart`: menampilkan salam sesuai tutorial.
-
-Tangkapan layar:
-
+Screenshot:
 - [Tampilan ponsel](docs/tutorial08-mobile.png)
 - [Tampilan desktop](docs/tutorial08-desktop.png)
 
-Flutter SDK tersedia di `C:\tools\flutter` dan sudah ditambahkan ke User PATH.
-Ekstensi resmi Flutter dan Dart untuk VS Code sudah terpasang.
-Buka terminal baru agar perubahan PATH terbaca.
+## Notes
+This is a learning project, so feel free to explore, modify, and improve it, hehe~.
 
-Target Chrome siap digunakan. Android SDK/Android Studio belum terpasang,
-sehingga menjalankan emulator atau membangun APK memerlukan setup Android
-terlebih dahulu. Toolchain desktop Windows juga belum lengkap; kedua hal
-ini tidak menghalangi menjalankan dan membangun aplikasi web.
+## AI Disclosure
+Saya menggunakan Claude Code (Anthropic) di VS Code untuk memahami instruksi tugas, membandingkannya dengan kode proyek, dan mengerjakan implementasi secara bertahap (step by step). Saya meninjau setiap perubahan dan melakukan commit sendiri.

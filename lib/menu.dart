@@ -8,9 +8,10 @@ class MyHomePage extends StatelessWidget {
   final String kelas = 'PBP B';
 
   final List<ItemHomepage> items = const [
-    ItemHomepage('Lihat Proyek', Icons.folder),
-    ItemHomepage('Tambah Proyek', Icons.add_circle),
-    ItemHomepage('Logout', Icons.logout),
+    ItemHomepage('Lihat Proyek', Icons.folder, Colors.blue),
+    ItemHomepage('Tambah Proyek', Icons.add_circle, Colors.green),
+    ItemHomepage('Lihat Skills', Icons.psychology, Colors.purple),
+    ItemHomepage('Logout', Icons.logout, Colors.red),
   ];
 
   @override
@@ -51,16 +52,19 @@ class MyHomePage extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  GridView.count(
-                    primary: false,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    crossAxisCount: 3,
-                    mainAxisExtent: 160,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    children: items.map((item) => ItemCard(item)).toList(),
+                  // Phones get a 2x2 grid, wider screens put all cards in one row.
+                  LayoutBuilder(
+                    builder: (context, constraints) => GridView.count(
+                      primary: false,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      crossAxisCount: constraints.maxWidth < 600 ? 2 : 4,
+                      mainAxisExtent: 160,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      children: items.map((item) => ItemCard(item)).toList(),
+                    ),
                   ),
                 ],
               ),
@@ -97,10 +101,13 @@ class InfoCard extends StatelessWidget {
 }
 
 class ItemHomepage {
-  const ItemHomepage(this.name, this.icon);
+  const ItemHomepage(this.name, this.icon, this.color);
 
   final String name;
   final IconData icon;
+
+  /// Background color of this item's card, so each action is visually distinct.
+  final Color color;
 }
 
 class ItemCard extends StatelessWidget {
@@ -111,7 +118,7 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).colorScheme.secondary,
+      color: item.color,
       borderRadius: BorderRadius.circular(12),
       clipBehavior: Clip.antiAlias,
       child: InkWell(

@@ -86,10 +86,10 @@ Saya melakukan prompt pada claude untuk membuatkan step by step guide lengkap de
 
 ## Progress Tugas
 
-### Tugas 8
+### Tugas 7
 Identitas pada info card, mengganti color di ItemHomepage, button tambahan untuk skills, grid yang beradaptasi pada lebar screen dan tes.
 
-## Assignment Refelction
+## Assignment Reflection
 
 ### Tugas 7
 

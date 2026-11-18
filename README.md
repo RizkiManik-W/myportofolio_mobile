@@ -12,6 +12,7 @@ Proyek ini adalah versi mobile dari website portofolio pribadi saya ([myportofol
 ## Tech Stack
 - Dart
 - Flutter (Material 3)
+- material_ui (Material widgets, pengganti import `package:flutter/material.dart`)
 - flutter_test (widget testing)
 - flutter_lints (static analysis)
 
@@ -58,10 +59,16 @@ myportofolio_mobile/
 ├── pubspec.yaml
 ├── analysis_options.yaml
 ├── lib/
-│   ├── main.dart        # bootstrap aplikasi (MyApp, MaterialApp, tema)
-│   └── menu.dart        # halaman utama (MyHomePage, InfoCard, ItemCard, ItemHomepage)
+│   ├── main.dart                # bootstrap aplikasi (MyApp, MaterialApp, tema)
+│   ├── screens/
+│   │   ├── menu.dart            # halaman utama (MyHomePage, InfoCard)
+│   │   └── project_form.dart    # form tambah proyek (ProjectFormPage)
+│   └── widgets/
+│       ├── left_drawer.dart     # menu drawer (LeftDrawer)
+│       └── project_card.dart    # tombol menu (ItemHomepage, ItemCard)
 ├── test/
-│   └── widget_test.dart # widget tests untuk halaman utama
+│   ├── widget_test.dart         # widget tests untuk halaman utama
+│   └── navigation_form_test.dart # tests drawer, navigasi, dan validasi form
 ├── tool/
 │   └── halo_burhan.dart # contoh program Dart dari tutorial
 ├── docs/                # screenshot
@@ -75,6 +82,16 @@ Di tutorial ini, saya melakukan setup Flutter SDK, membuat proyek `myportofolio_
 Screenshot:
 - [Tampilan ponsel](docs/tutorial08-mobile.png)
 - [Tampilan desktop](docs/tutorial08-desktop.png)
+
+## Tutorial 09
+Di tutorial ini, saya menambahkan navigasi, layout, dan form ke aplikasi:
+- Mengganti import `package:flutter/material.dart` dengan package `material_ui`.
+- Membuat `LeftDrawer` dengan header dan dua menu: **Home** dan **Add Project**. Keduanya memakai `Navigator.pushReplacement` agar halaman tidak menumpuk di stack.
+- Membuat `ProjectFormPage` (`StatefulWidget`) dengan `Form` dan `GlobalKey<FormState>`. Field-nya: Nama Proyek, Deskripsi, Kategori (dropdown), Teknologi, dan Tautan. Setiap field memiliki validator (tidak boleh kosong, deskripsi minimal 10 karakter, tautan harus URL valid).
+- Tombol **Save** memvalidasi form, lalu menampilkan `AlertDialog` berisi data yang diinput. Menekan **OK** menutup dialog dan me-reset form.
+- Tombol **Tambah Proyek** di halaman utama membuka form dengan `Navigator.push`, sehingga halaman utama tetap ada di bawahnya dan bisa kembali dengan tombol/gesture back.
+- Refactor struktur file: halaman ke `lib/screens/`, widget reusable ke `lib/widgets/`.
+- Menambahkan widget tests untuk drawer, navigasi, validasi form, dan dialog.
 
 ## Notes
 This is a learning project, so feel free to explore, modify, and improve it, hehe~.

@@ -16,12 +16,17 @@ class LeftDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'My Portfolio',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                // Shrinks the title on narrow drawers instead of wrapping,
+                // so it never overflows the fixed-height header.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    'My Portfolio',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 SizedBox(height: 10),

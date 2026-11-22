@@ -5,7 +5,7 @@ import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
 void main() {
-  testWidgets('Home shows profile information and the four menu cards', (
+  testWidgets('Home shows profile information and the five menu cards', (
     tester,
   ) async {
     await tester.pumpWidget(const MyApp());
@@ -15,7 +15,7 @@ void main() {
     expect(find.text('Putu Rizki Manik Widiadnyana'), findsOneWidget);
     expect(find.text('PBP B'), findsOneWidget);
     expect(find.byType(InfoCard), findsNWidgets(3));
-    expect(find.byType(ItemCard), findsNWidgets(4));
+    expect(find.byType(ItemCard), findsNWidgets(5));
     expect(find.text('Selamat datang di MyPortfolio Mobile!'), findsOneWidget);
   });
 

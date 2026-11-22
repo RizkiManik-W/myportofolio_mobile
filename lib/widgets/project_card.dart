@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
 class ItemHomepage {
@@ -32,11 +33,17 @@ class ItemCard extends StatelessWidget {
               ),
             );
 
-          // Navigasi ke form tambah proyek
-          if (item.name == 'Tambah Proyek') {
+          // Kartu yang punya halaman tujuan dibuka dengan push, sehingga
+          // halaman utama tetap di bawahnya dan tombol back bisa dipakai.
+          final Widget? destination = switch (item.name) {
+            'Tambah Proyek' => const ProjectFormPage(),
+            'Tambah Pengalaman' => const ExperienceFormPage(),
+            _ => null,
+          };
+          if (destination != null) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ProjectFormPage()),
+              MaterialPageRoute(builder: (context) => destination),
             );
           }
         },

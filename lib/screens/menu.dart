@@ -12,6 +12,7 @@ class MyHomePage extends StatelessWidget {
   final List<ItemHomepage> items = const [
     ItemHomepage('Lihat Proyek', Icons.folder, Colors.blue),
     ItemHomepage('Tambah Proyek', Icons.add_circle, Colors.green),
+    ItemHomepage('Tambah Pengalaman', Icons.work, Colors.teal),
     ItemHomepage('Lihat Skills', Icons.psychology, Colors.purple),
     ItemHomepage('Logout', Icons.logout, Colors.red),
   ];
@@ -56,14 +57,16 @@ class MyHomePage extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  // Phones get a 2x2 grid, wider screens put all cards in one row.
+                  // Phones get 2 columns, wider screens put all cards in one row.
                   LayoutBuilder(
                     builder: (context, constraints) => GridView.count(
                       primary: false,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.symmetric(vertical: 20),
-                      crossAxisCount: constraints.maxWidth < 600 ? 2 : 4,
+                      crossAxisCount: constraints.maxWidth < 600
+                          ? 2
+                          : items.length,
                       mainAxisExtent: 160,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,

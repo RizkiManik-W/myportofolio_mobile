@@ -62,13 +62,15 @@ myportofolio_mobile/
 │   ├── main.dart                # bootstrap aplikasi (MyApp, MaterialApp, tema)
 │   ├── screens/
 │   │   ├── menu.dart            # halaman utama (MyHomePage, InfoCard)
-│   │   └── project_form.dart    # form tambah proyek (ProjectFormPage)
+│   │   ├── project_form.dart    # form tambah proyek (ProjectFormPage)
+│   │   └── experience_form.dart # add experience form (ExperienceFormPage)
 │   └── widgets/
 │       ├── left_drawer.dart     # menu drawer (LeftDrawer)
 │       └── project_card.dart    # tombol menu (ItemHomepage, ItemCard)
 ├── test/
 │   ├── widget_test.dart         # widget tests untuk halaman utama
-│   └── navigation_form_test.dart # tests drawer, navigasi, dan validasi form
+│   ├── navigation_form_test.dart # drawer, navigation, and project form validation tests
+│   └── experience_form_test.dart # experience form navigation and validation tests
 ├── tool/
 │   └── halo_burhan.dart # contoh program Dart dari tutorial
 ├── docs/                # screenshot
@@ -101,10 +103,26 @@ Saya menggunakan Claude Code (Anthropic) di VS Code untuk memahami instruksi tug
 
 Saya melakukan prompt pada claude untuk membuatkan step by step guide lengkap dengan penjelasan detil mengenai step yang dilakukan.
 
+### Tugas 8
+- **Tools:** Claude Code (Anthropic) di VS Code.
+- **Strategi prompt:** Saya memberikan brief mengenai tugas dan meminta step by step untuk menyelesaikannya dan meminta penjelasan mengenai apa yang dilakukan di setiap step, sehingga saya paham jelas apa yang terjadi.
+- **Parts yang dibantu AI :**
+  - memilih **Experience** section dengan cara membaca `Experience` model di Django backend saya, lalu mencocokkan form fields (title, description, category, thumbnail, start date, end date) dan validasinya.
+  - Membuat test `experience_form_test.dart`.
+  - Drafting reflection yang nanti akan saya tulis sendiri.
+- **Limitasi AI:** AI tidak dapat menjalankan appnya jadi saya harus mengekceknya sendiri melalui chrome.
+
 ## Progress Tugas
 
 ### Tugas 7
 Identitas pada info card, mengganti color di ItemHomepage, button tambahan untuk skills, grid yang beradaptasi pada lebar screen dan tes.
+
+### Tugas 8
+- Membuat **Tambah Pengalaman** form (`ExperienceFormPage`) di `lib/screens/experience_form.dart`, yang berbasis django `Experience` model: Judul (title), Deskripsi (description), Kategori (category dropdown), Thumbnail (optional), Tanggal Mulai (start date), and Tanggal Selesai (optional end date), dengan tanggal dipilih melalui `showDatePicker()`.
+- Validation: field yang diminta tidak boleh kosng atau hanya space, tittle paling panjang 255 karakter, deskripsi minimal 10 karakter, thumbnail harus `http`/`https` URL, dan end date tidak boleh sebelum start date.
+- **Simpan** button menunjukkan summary dari input di sebuah `AlertDialog`; **OK** button menutup dialgod dan mereset form.
+- menambahkan **Tambah Pengalaman** card (`Navigator.push`)di homepage dan sebuah **Add Experience** option (`Navigator.pushReplacement`) di drawer. Grid menunjukkan 2 columns di handphone dan semua cards di satu row di screen yang lebar.
+- menambahkan 10 widget test (27 tests dan lulus), dan `flutter analyze` mereport tidak ad isu.
 
 ## Assignment Reflection
 
@@ -144,3 +162,13 @@ Identitas pada info card, mengganti color di ItemHomepage, button tambahan untuk
 5. `BuildContext` merupakan sebuah widget location di dalam widget tree, di pass ke semua setiap `build` method. Ini memungkinkan widget untuk mencari ancestor dari node dan service yang diberikan. Di app ini, `Theme.of(context)` mendapatkan theme oclor untuk `AppBar`, dan `ScaffoldMessenger.of(context)` menampilkan SnackBar ketika `ItemCard` di tap.
 
 6. **Hot reload** (`r`) memasukkan perubahan code ke app yang sedang berjalan dan melakukan rebuild UI tanpa menghilangkan state, sehingga perubahan visual langsung terlihat hampir seketika. **Hot restart** (`R`) juga memuat code baru tetapi me-reset semua state dan menjalankan app kembali dari `main()`. Hot restart diperlukan ketika perubahan mempengaruhi code yang hanya dijalankan sekali, seperti `main()`, `initState()`, atau variabel global/static, atau ketika mengubah widget dari stateless menjadi stateful. Full restart (stop lalu run ulang) diperlukan untuk perubahan di luar code Dart, seperti menambah package di `pubspec.yaml`, native code Android/iOS, atau assets.
+
+### Tugas 8
+
+1. `Navigato.push()` menambahkan page baru diatas stack, jadi page sebelumnya tetap berada dibawah dan use dapat kembali kesana dengan menggunakan back button. `Navigator.pushReplacement()` mereplace top page dengan yang baru, yang membuat old page di remove that tidak dapat kembali kesana. `Navigator.pop()` meremove top page dan mereturn page dibawahnya. **Tambah Pengalaman** car menggunakan `Navigator.push()`, jadi hompage tetpa berada di bawah form that user dapat kembali kesana dengan back button. **Home** option di drawer menggunakan `Navigator.pushReplacement()` to `MyHomePage`: form page diganti dengan new home page, jadi stack tidak terus berkembang setiap kali user berpindah dengan drawer. 
+
+2. `Scaffold` memberikan stiap page frame yang sama: sebuah `appBar` slot di atas, sebuah `drawer` di samping, dan `body` untuk content. `AppBar` menunjukkan page tittle bersamma menu button yang membukan drawer, dan `Drawer` (`LeftDrawer`) merupakan satu widget yang digunakan pada homepage, the project forn, dan experience form, jadi navigation menu selalu sama. Contoh untuk theme color: the `AppBar` pada `MyHomePage`, `ProjectFormPage`, dan `ExperienceFormPage` semua menggunakan `Theme.of(context).colorScheme.primary` (indigo, dari `seedColorr` di `main.dart`). JIka theme color dirubah di satu tempat, semua juda akan terubah.
+
+3. Form di susun sebagai single `column` dengan field yang mengisi width (`CrossAxisAlignment.stretch`), karena top-to-bottom order yang paling mudah untuk disi di phonescreen. `SizedBox` digunakan untuk spacing antara fields (16 px) dan sebelum button (24 px), jadi labels, error messages, dan input tidak saling bertumpuk. `padding` menambahkan space di screen edges, dan `ConstrainedBox` melimit form menjadi 600 px wide yang membuatnya tetap readable di desktop/chrome.  `SingleChildScrollView` membuat semuanya bisa discroll, jadi ketika sccreen pendek atau keyboard muncul, setiap field dan **Simpan** button tetap reachable tanpa overflowing. `SafeArea` memastikan konten tidak tertutup oleh notch atau system bars.
+
+4. `GlobalKey<FormState>` merupakan kunci yang menghubungkan `Form` widget dengan statenya, jadi **Simpan** button dapat memanggil `_formKey.currentState!.validate()`. `validate()` menjalankan `validator` untuk setiap field, sebuah validator mereturn error message ketika input tidak valid, atau `null` ketika ia valid. `validate()` mereturn `true` hanya ketika setiap field valid, dan ketika itu summary dialog ditunjukkan. Contoh dari value yang di tolak: thumbnail `ftp://gambar`, Field menggunakan `TextInputType.url`, tetapi URL keyboard hanya menambahkan keys seperti  `/` and `.com`, user masih dapat mengetik atau paste text apapun, termasuk space atau sceheme selain `http`/`https`. Begitu juga, judul yang hanya berisi spasi tetap bisa diketik dengan keyboard biasa. Jadi input type dan keyboard hanya membantu user saat mengetik, sedangkan `validator` yang benar-benar memastikan input sesuai dengan aturan model.

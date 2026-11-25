@@ -95,6 +95,22 @@ Di tutorial ini, saya menambahkan navigasi, layout, dan form ke aplikasi:
 - Refactor struktur file: halaman ke `lib/screens/`, widget reusable ke `lib/widgets/`.
 - Menambahkan widget tests untuk drawer, navigasi, validasi form, dan dialog.
 
+## Tutorial 10
+Di tutorial ini, aplikasi saya hubungkan ke backend Django ([myportofolio](https://github.com/RizkiManik-W/myportofolio)):
+- **Django:** menambahkan `TokenAuthentication`, endpoint login (`/api/v1/auth/token/`) dan logout (`/api/v1/auth/logout/`), serta `django-cors-headers` agar Flutter Web bisa mengakses API.
+- **Model & API:** model `Project` dengan `json_serializable`, dan `ApiClient` (package `http`) untuk mengambil, menambah proyek, login, dan logout.
+- **State:** `ApiClient` dan `AuthState` dibagikan ke seluruh aplikasi dengan `MultiProvider`. Token hanya disimpan di memori.
+- **Halaman:** daftar proyek dari Django (**Lihat Proyek**), detail proyek, dan halaman login.
+- **Proteksi:** **Tambah Proyek** wajib login dulu (`ensureLoggedIn`), lalu form mengirim `POST` dengan header `Authorization: Token ...`. Drawer menampilkan Login/Logout sesuai status login.
+- **CI/CD:** GitHub Actions (`.github/workflows/main.yaml`) menjalankan format, analyze, dan test, lalu membuat APK release (`app-release-apk`).
+
+Cara menjalankan dengan Django lokal:
+```bash
+dart run build_runner build --delete-conflicting-outputs
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8000
+```
+Untuk emulator Android cukup `flutter run` (default `http://10.0.2.2:8000`).
+
 ## Notes
 This is a learning project, so feel free to explore, modify, and improve it, hehe~.
 

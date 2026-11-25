@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:myportofolio_mobile/main.dart';
+
+import 'test_helpers.dart';
+
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
@@ -29,7 +31,7 @@ Future<void> pumpForm(WidgetTester tester) async {
 void main() {
   group('Drawer', () {
     testWidgets('shows the header and both menu items', (tester) async {
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(testApp());
       await openDrawer(tester);
 
       expect(find.text('My Portfolio'), findsOneWidget);
@@ -42,7 +44,7 @@ void main() {
     });
 
     testWidgets('Add Project replaces the page with the form', (tester) async {
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(testApp());
       await openDrawer(tester);
       await tester.tap(find.text('Add Project'));
       await tester.pumpAndSettle();
@@ -68,7 +70,7 @@ void main() {
 
   group('Tambah Proyek card', () {
     testWidgets('pushes the form, and back returns home', (tester) async {
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(testApp());
       await tester.tap(find.text('Tambah Proyek'));
       await tester.pumpAndSettle();
 
@@ -84,9 +86,11 @@ void main() {
       expect(find.byType(ProjectFormPage), findsNothing);
     });
 
-    testWidgets('other cards stay on the home page', (tester) async {
-      await tester.pumpWidget(const MyApp());
-      await tester.tap(find.text('Lihat Proyek'));
+    testWidgets('cards without a page stay on the home page', (tester) async {
+      await tester.pumpWidget(testApp());
+      // Lihat Proyek now opens the project list (Tutorial 10), so use a
+      // card that still only shows a SnackBar.
+      await tester.tap(find.text('Lihat Skills'));
       await tester.pumpAndSettle();
 
       expect(find.byType(ProjectFormPage), findsNothing);

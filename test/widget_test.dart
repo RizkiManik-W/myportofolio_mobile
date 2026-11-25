@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:myportofolio_mobile/main.dart';
+
+import 'test_helpers.dart';
+
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
@@ -8,7 +10,7 @@ void main() {
   testWidgets('Home shows profile information and the five menu cards', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(testApp());
 
     expect(find.text('MyPortfolio'), findsOneWidget);
     expect(find.text('2506621900'), findsOneWidget);
@@ -26,7 +28,7 @@ void main() {
     'Logout',
   ]) {
     testWidgets('$label shows its own SnackBar message', (tester) async {
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(testApp());
       await tester.tap(find.text(label));
       await tester.pumpAndSettle();
 
@@ -35,7 +37,7 @@ void main() {
   }
 
   testWidgets('Each menu card has its own background color', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(testApp());
 
     Color cardColor(String label) => tester
         .widget<Material>(
@@ -59,7 +61,7 @@ void main() {
       tester.view.physicalSize = size;
       addTearDown(tester.view.resetDevicePixelRatio);
       addTearDown(tester.view.resetPhysicalSize);
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(testApp());
       await tester.ensureVisible(find.text('Logout'));
       await tester.tap(find.text('Logout'));
       await tester.pumpAndSettle();

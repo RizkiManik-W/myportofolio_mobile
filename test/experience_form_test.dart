@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:myportofolio_mobile/main.dart';
+
+import 'test_helpers.dart';
+
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 
@@ -58,7 +60,7 @@ void main() {
     testWidgets('Tambah Pengalaman card pushes the form, back returns home', (
       tester,
     ) async {
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(testApp());
       await tester.ensureVisible(find.text('Tambah Pengalaman'));
       await tester.tap(find.text('Tambah Pengalaman'));
       await tester.pumpAndSettle();
@@ -78,7 +80,7 @@ void main() {
     testWidgets('drawer keeps Home and Add Project, and adds Add Experience', (
       tester,
     ) async {
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(testApp());
       await openDrawer(tester);
 
       expect(find.text('Home'), findsOneWidget);
@@ -87,7 +89,7 @@ void main() {
     });
 
     testWidgets('drawer Add Experience opens the form', (tester) async {
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(testApp());
       await openDrawer(tester);
       await tester.tap(find.text('Add Experience'));
       await tester.pumpAndSettle();

@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
 
 class ItemHomepage {
   const ItemHomepage(this.name, this.icon, this.color);
@@ -36,6 +37,7 @@ class ItemCard extends StatelessWidget {
           // Kartu yang punya halaman tujuan dibuka dengan push, sehingga
           // halaman utama tetap di bawahnya dan tombol back bisa dipakai.
           final Widget? destination = switch (item.name) {
+            'Lihat Proyek' => const ProjectListScreen(),
             'Tambah Proyek' => const ProjectFormPage(),
             'Tambah Pengalaman' => const ExperienceFormPage(),
             _ => null,

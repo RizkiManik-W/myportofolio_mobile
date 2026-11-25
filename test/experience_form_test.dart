@@ -12,7 +12,7 @@ NavigatorState navigator(WidgetTester tester) =>
     tester.state<NavigatorState>(find.byType(Navigator).first);
 
 Future<void> pumpForm(WidgetTester tester) async {
-  await tester.pumpWidget(const MaterialApp(home: ExperienceFormPage()));
+  await tester.pumpWidget(testPage(const ExperienceFormPage()));
 }
 
 Future<void> openDrawer(WidgetTester tester) async {

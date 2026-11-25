@@ -21,12 +21,8 @@ void main() {
     expect(find.text('Selamat datang di MyPortfolio Mobile!'), findsOneWidget);
   });
 
-  for (final label in [
-    'Lihat Proyek',
-    'Tambah Proyek',
-    'Lihat Skills',
-    'Logout',
-  ]) {
+  // Tambah Proyek and Logout depend on login; see navigation_form_test.dart.
+  for (final label in ['Lihat Proyek', 'Tambah Pengalaman', 'Lihat Skills']) {
     testWidgets('$label shows its own SnackBar message', (tester) async {
       await tester.pumpWidget(testApp());
       await tester.tap(find.text(label));
@@ -67,7 +63,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      expect(find.text('Kamu telah menekan tombol Logout!'), findsOneWidget);
+      expect(find.text('You are not logged in.'), findsOneWidget);
     });
   }
 }

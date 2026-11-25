@@ -1,7 +1,13 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/models/project.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:provider/provider.dart';
 
-/// Form page for adding a new portfolio project.
+/// Form page that creates a new project in Django with
+/// `POST /api/v1/projects/` (only the superuser may do this).
 class ProjectFormPage extends StatefulWidget {
   const ProjectFormPage({super.key});
 
@@ -12,36 +18,89 @@ class ProjectFormPage extends StatefulWidget {
 class _ProjectFormPageState extends State<ProjectFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  String _name = '';
+  String _title = '';
   String _description = '';
-  String _category = 'Web';
-  String _technologies = '';
-  String _link = '';
+  String _techStack = '';
+  String _projectUrl = '';
+  String _projectImageUrl = '';
+  bool _isSubmitting = false;
 
-  static const List<String> _categories = [
-    'Web',
-    'Mobile',
-    'Data Science',
-    'Game',
-    'Lainnya',
-  ];
+  /// Returns an error message when [value] is not an http(s) URL.
+  static String? _urlError(String value) {
+    final uri = Uri.tryParse(value);
+    final isWebUrl =
+        uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
+    return isWebUrl ? null : 'Must be a valid URL (https://...)';
+  }
 
-  void _save() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    showDialog(
+    // The page is already guarded, but the token can be gone by now
+    // (for example after Logout in the drawer), so check again.
+    final loggedIn = await ensureLoggedIn(context);
+    if (!loggedIn || !mounted) return;
+
+    final auth = context.read<AuthState>();
+    final api = context.read<ApiClient>();
+    final newProject = Project(
+      title: _title.trim(),
+      description: _description.trim(),
+      techStack: _techStack.trim(),
+      projectUrl: _projectUrl.trim(),
+      projectImageUrl: _projectImageUrl.trim(),
+    );
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final created = await api.createProject(newProject, token: auth.token!);
+      if (!mounted) return;
+      // Not awaited: the finally block below must stop the spinner now,
+      // not after the dialog is closed.
+      _showSuccess(created);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      if (e.statusCode == 401) {
+        // Django no longer accepts this token: forget it and ask again.
+        await auth.logout();
+        _showError('Your session has expired. Please log in again.');
+      } else if (e.statusCode == 403) {
+        _showError('Only the portfolio owner can add projects (403).');
+      } else {
+        _showError('Failed to save project (${e.statusCode}).');
+      }
+    } catch (_) {
+      if (!mounted) return;
+      _showError('Cannot reach the server. Is Django running?');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+  }
+
+  void _showSuccess(Project created) {
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Proyek berhasil disimpan!'),
+        title: const Text('Project saved!'),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Nama: $_name'),
-              Text('Deskripsi: $_description'),
-              Text('Kategori: $_category'),
-              Text('Teknologi: $_technologies'),
-              Text('Tautan: $_link'),
+              Text('Title: ${created.title}'),
+              Text('Description: ${created.description}'),
+              Text('Tech Stack: ${created.techStack}'),
+              Text('Project URL: ${created.projectUrl}'),
+              if (created.projectImageUrl.isNotEmpty)
+                Text('Image URL: ${created.projectImageUrl}'),
             ],
           ),
         ),
@@ -50,13 +109,18 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
             onPressed: () {
               Navigator.pop(context);
               _formKey.currentState!.reset();
-              setState(() => _category = 'Web');
             },
             child: const Text('OK'),
           ),
         ],
       ),
     );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   /// Shared look for every text field on this page.
@@ -88,64 +152,71 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                decoration: _decoration('Nama Proyek', 'Contoh: MyPortfolio'),
-                onChanged: (value) => setState(() => _name = value),
+                decoration: _decoration('Title', 'Example: MyPortfolio'),
+                maxLength: 255,
+                onChanged: (value) => _title = value,
                 validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'Nama proyek tidak boleh kosong!'
+                    ? 'Title cannot be empty!'
                     : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               TextFormField(
                 decoration: _decoration(
-                  'Deskripsi',
-                  'Ceritakan singkat tentang proyek ini',
+                  'Description',
+                  'A short story about this project',
                 ),
                 maxLines: 3,
-                onChanged: (value) => setState(() => _description = value),
+                onChanged: (value) => _description = value,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Deskripsi tidak boleh kosong!';
+                    return 'Description cannot be empty!';
                   }
                   if (value.trim().length < 10) {
-                    return 'Deskripsi minimal 10 karakter!';
+                    return 'Description must be at least 10 characters!';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                decoration: _decoration('Kategori', 'Pilih kategori'),
-                initialValue: _category,
-                items: _categories
-                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                    .toList(),
-                onChanged: (value) => setState(() => _category = value!),
-              ),
-              const SizedBox(height: 16),
               TextFormField(
-                decoration: _decoration('Teknologi', 'Contoh: Flutter, Django'),
-                onChanged: (value) => setState(() => _technologies = value),
+                decoration: _decoration(
+                  'Tech Stack',
+                  'Example: Flutter, Django',
+                ),
+                maxLength: 255,
+                onChanged: (value) => _techStack = value,
                 validator: (value) => (value == null || value.trim().isEmpty)
-                    ? 'Teknologi tidak boleh kosong!'
+                    ? 'Tech stack cannot be empty!'
                     : null,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                decoration: _decoration(
+                  'Project URL',
+                  'https://github.com/username/project',
+                ),
+                keyboardType: TextInputType.url,
+                onChanged: (value) => _projectUrl = value,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Project URL cannot be empty!';
+                  }
+                  return _urlError(value.trim());
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
                 decoration: _decoration(
-                  'Tautan',
-                  'https://github.com/username/proyek',
+                  'Project Image URL (optional)',
+                  'https://example.com/screenshot.png',
                 ),
                 keyboardType: TextInputType.url,
-                onChanged: (value) => setState(() => _link = value),
+                onChanged: (value) => _projectImageUrl = value,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Tautan tidak boleh kosong!';
-                  }
-                  final uri = Uri.tryParse(value.trim());
-                  if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
-                    return 'Tautan harus berupa URL valid (https://...)';
-                  }
-                  return null;
+                  // Optional: an empty field is fine, anything else must be
+                  // a URL because Django uses a URLField.
+                  if (value == null || value.trim().isEmpty) return null;
+                  return _urlError(value.trim());
                 },
               ),
               const SizedBox(height: 24),
@@ -155,8 +226,15 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.white,
                   ),
-                  onPressed: _save,
-                  child: const Text('Save'),
+                  // Disabled while waiting, so the project isn't sent twice.
+                  onPressed: _isSubmitting ? null : _submit,
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Save'),
                 ),
               ),
             ],

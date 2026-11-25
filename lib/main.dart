@@ -9,10 +9,13 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({required this.apiClient, super.key});
+  const MyApp({required this.apiClient, this.initialToken, super.key});
 
   /// Shared HTTP client; tests pass one backed by a fake server.
   final ApiClient apiClient;
+
+  /// Lets tests start already logged in. The real app starts logged out.
+  final String? initialToken;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,9 @@ class MyApp extends StatelessWidget {
         Provider<ApiClient>.value(value: apiClient),
         // ChangeNotifierProvider rebuilds widgets that watch AuthState
         // whenever login or logout calls notifyListeners().
-        ChangeNotifierProvider<AuthState>(create: (_) => AuthState(apiClient)),
+        ChangeNotifierProvider<AuthState>(
+          create: (_) => AuthState(apiClient, initialToken: initialToken),
+        ),
       ],
       child: MaterialApp(
         title: 'MyPortfolio',

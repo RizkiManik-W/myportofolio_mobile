@@ -51,3 +51,6 @@ app.*.map.json
 !/lib/
 !/lib/**
 !*.manifest
+
+# Generated json_serializable files (CI regenerates them with build_runner)
+*.g.dart
